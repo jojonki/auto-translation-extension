@@ -1,5 +1,9 @@
 "use strict";
 
+function replaceNewlinesWithSpaces(str) {
+  return str.replace(/\n/g, " ");
+}
+
 function getLanguageCode(input) {
   // \u3040-\u309F: ひらがな, \u30A0-\u30FF:カタカナ, \uFF66-\uFF9F: 半角カタカナ, \u4E00-\u9FAF: 漢字
   const japaneseRegex =
@@ -15,15 +19,17 @@ function getLanguageCode(input) {
   }
 }
 
-chrome.contextMenus.create({
-  id: "google-translate",
-  title: "Google翻訳: %s",
-  contexts: ["selection"],
-});
-chrome.contextMenus.create({
-  id: "deepl-translate",
-  title: "DeepL翻訳: %s",
-  contexts: ["selection"],
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "google-translate",
+    title: "Google翻訳: %s",
+    contexts: ["selection"],
+  });
+  chrome.contextMenus.create({
+    id: "deepl-translate",
+    title: "DeepL翻訳: %s",
+    contexts: ["selection"],
+  });
 });
 
 chrome.contextMenus.onClicked.addListener(function (info) {
