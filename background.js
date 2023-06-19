@@ -19,6 +19,10 @@ function getLanguageCode(input) {
   }
 }
 
+function getSelectionText() {
+  return window.getSelection().toString();
+}
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "google-translate",
@@ -32,10 +36,7 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-chrome.contextMenus.onClicked.addListener(function (info) {
-  const rawText = info.selectionText;
-  const text = replaceNewlinesWithSpaces(info.selectionText);
-
+function createTranslateTab(text, transService) {
   const sourceLang = getLanguageCode(text);
   let targetLang = "ja";
   if (sourceLang == "ja") {
@@ -43,16 +44,50 @@ chrome.contextMenus.onClicked.addListener(function (info) {
   }
 
   let transUrl = null;
-  if (info.menuItemId == "google-translate") {
+  if (transService == "google-translate") {
     transUrl =
       `https://translate.google.com/#view=home&op=translate&sl=auto&tl=${targetLang}&text=` +
       encodeURIComponent(text);
-  } else if (info.menuItemId == "deepl-translate") {
+  } else if (transService == "deepl-translate") {
     transUrl =
       `https://www.deepl.com/translator#"${sourceLang}-${targetLang}/` +
       encodeURIComponent(text);
   }
   if (transUrl) {
     chrome.tabs.create({ url: transUrl });
+  }
+}
+
+chrome.contextMenus.onClicked.addListener(function (info) {
+  const text = replaceNewlinesWithSpaces(info.selectionText);
+  createTranslateTab(text, info.menuItemId);
+});
+
+chrome.commands.onCommand.addListener(function (command) {
+  if (command === "google-translate" || command === "deepl-translate") {
+    chrome.tabs.query(
+      {
+        active: true,
+        // lastFocusedWindow: true,
+      },
+      function (tabs) {
+        let tab = tabs[0];
+        let url = tab.url;
+        let tabId = tab.id;
+        chrome.scripting.executeScript(
+          {
+            target: { tabId: tabId },
+            func: getSelectionText,
+          },
+          (res) => {
+            let text = res[0].result;
+            console.log(text);
+            if (text.length > 0) {
+              createTranslateTab(text, command);
+            }
+          }
+        );
+      }
+    );
   }
 });

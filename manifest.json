@@ -1,8 +1,8 @@
 {
   "name": "日英自動翻訳",
-  "version": "1.1",
+  "version": "1.2",
   "description": "日本語⇔英語の翻訳をGoogle翻訳かDeeplで行います",
-  "permissions": ["activeTab", "contextMenus"],
+  "permissions": ["activeTab", "contextMenus", "scripting"],
   "background": {
     "service_worker": "background.js"
   },
@@ -14,6 +14,22 @@
       "128": "images/icon_128.png"
     },
     "default_title": "日英自動翻訳"
+  },
+  "commands": {
+    "google-translate": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+G",
+        "mac": "MacCtrl+Shift+G"
+      },
+      "description": "Call Google Translation"
+    },
+    "deepl-translate": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+D",
+        "mac": "MacCtrl+Shift+D"
+      },
+      "description": "Call Google Translation"
+    }
   },
   "icons": {
     "16": "images/icon_128.png",
