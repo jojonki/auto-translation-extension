@@ -28,7 +28,7 @@
         "default": "Ctrl+Shift+D",
         "mac": "MacCtrl+Shift+D"
       },
-      "description": "Call Google Translation"
+      "description": "Call DeepL Translation"
     }
   },
   "icons": {
